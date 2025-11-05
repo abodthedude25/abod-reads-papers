@@ -17,7 +17,6 @@ Each paper has its own self-contained directory, which includes:
 
 ### 1\. SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills
 
-  * **[Code](https://www.google.com/search?q=./sarathi/)**
   * **Paper:** [arxiv.org/abs/2308.16369](https://arxiv.org/abs/2308.16369)
   * **Core Concept:** Solves the inefficient, memory-bound decode phase of LLM inference. It does this by "piggybacking" a batch of decode tokens onto a compute-bound "prefill chunk," fusing their FFN (linear) layers into a single, efficient operation.
   * **Status:** Complete. The implementation proves the "piggybacking" speedup on a real GPU.
@@ -33,9 +32,8 @@ Each paper has its own self-contained directory, which includes:
 
 -----
 
-### 3\. Context Parallelism (Coming Soon)
+### 3\. Context Parallelism 
 
-  * **[Code](https://www.google.com/search?q=./context-parallelism/)** (placeholder)
   * **Paper:** [arxiv.org/abs/2411.01783](https://arxiv.org/abs/2411.01783)
   * **Core Concept:** Solves the O(T²) compute bottleneck for million-token prefill by introducing "pass-Q" and "pass-KV" ring attention variants, which are dynamically selected by a heuristic.
   * **Status:** Planned.
