@@ -1,0 +1,3 @@
+## Simple requirements for the SARATHI demo
+
+torch>=2.0
