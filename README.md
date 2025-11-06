@@ -23,12 +23,11 @@ Each paper has its own self-contained directory, which includes:
 
 -----
 
-### 2\. vLLM / PagedAttention (Coming Soon)
+### 2\. vLLM / PagedAttention 
 
-  * **[Code](https://www.google.com/search?q=./paged-attention/)** (placeholder)
   * **Paper:** [arxiv.org/abs/2309.06180](https://arxiv.org/abs/2309.06180)
   * **Core Concept:** Solves the massive memory fragmentation problem in LLM serving by bringing Operating Systems concepts (virtual memory and paging) to the GPU's KV Cache. This is the core technology of the vLLM library.
-  * **Status:** Planned.
+  * **Status:** Complete.
 
 -----
 
@@ -36,7 +35,7 @@ Each paper has its own self-contained directory, which includes:
 
   * **Paper:** [arxiv.org/abs/2411.01783](https://arxiv.org/abs/2411.01783)
   * **Core Concept:** Solves the O(T²) compute bottleneck for million-token prefill by introducing "pass-Q" and "pass-KV" ring attention variants, which are dynamically selected by a heuristic.
-  * **Status:** Planned.
+  * **Status:** Complete.
 
 ## How to Use This Repo
 
