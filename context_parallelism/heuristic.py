@@ -1,5 +1,3 @@
-import torch
-
 def heuristic_select_mode(T, P, N, C_peak, BW_peak, NKV, NH, e=2):
     """
     Implements the analytic heuristic from Algorithm 5.
@@ -19,31 +17,37 @@ def heuristic_select_mode(T, P, N, C_peak, BW_peak, NKV, NH, e=2):
         miss_rate = 1.0
     else:
         miss_rate = T / (T + P)
-        
-    # --- Directly implement Algorithm 5 logic ---
-    
-    try:
-        # Condition 1: Is T large enough to hide KV comm latency?
-        # (From Equation 2)
-        cond_T_compute_bound = N * (C_peak * NKV * e) / (2 * NH * BW_peak)
-        
-        # Condition 2: Is the miss rate high enough?
-        # (From Equation 5)
-        comm_overlap_term = (4 * T * BW_peak) / (N * C_peak * e)
-        cond_miss_rate_bound = 2 * (NKV / NH) - comm_overlap_term
-        
-    except ZeroDivisionError:
-        # Fallback in case of zero division (e.g., BW_peak=0)
-        cond_T_compute_bound = float('inf')
-        cond_miss_rate_bound = 2 * (NKV / NH)
 
-    # The paper's heuristic (Algorithm 5):
-    # if (T >= ...) OR (miss_rate >= ...):
-    #    pass-KV
-    # else:
-    #    pass-Q
-    
-    if (T >= cond_T_compute_bound) or (miss_rate >= cond_miss_rate_bound):
+    # 1. Message size check (from Eq 1)
+    # Is pass-KV cheaper just based on tensor size?
+    cond1_threshold = 2 * (NKV / NH)
+    if miss_rate >= cond1_threshold:
+        # e.g., T=1000, P=1000. miss_rate=0.5
+        # If NKV/NH = 1/8, threshold=0.25. 0.5 > 0.25 -> pass-KV
         return "pass-KV"
-    else:
+
+    # 2. Compute-bound check (from Eq 2)
+    # Is T large enough that Attn(T, T+P) compute
+    # can hide the KV communication latency?
+    try:
+        cond2_threshold = N * (C_peak * NKV * e) / (2 * NH * BW_peak)
+    except ZeroDivisionError:
+        cond2_threshold = float('inf')
+
+    if T >= cond2_threshold:
+         return "pass-KV"
+
+    # 3. Refined fallback check (from Eq 5)
+    # Compares exposed pass-KV comm vs. pass-Q comm (incl. All2All)
+    try:
+        # This term estimates the compute time relative to bandwidth
+        comm_overlap_term = (4 * T * BW_peak) / (N * C_peak * e)
+        cond3_threshold = cond1_threshold - comm_overlap_term
+    except ZeroDivisionError:
+        cond3_threshold = cond1_threshold
+
+    if miss_rate < cond3_threshold:
         return "pass-Q"
+    else:
+        # In the ambiguous zone, pass-KV is the safer default
+        return "pass-KV"
