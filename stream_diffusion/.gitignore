@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Outputs
+output_*.png
+*.mp4
+*.avi
+
+# Logs
+*.log
+*.out
+*.err
+benchmark_*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# HuggingFace cache
+.cache/
+transformers_cache/
+
+# Temporary
+temp/
+tmp/
